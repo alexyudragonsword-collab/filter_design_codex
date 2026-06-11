@@ -24,11 +24,13 @@ def measure(spec: FilterSpecification, response: list[ResponsePoint]) -> Respons
         pass_points = [p for p in response if p.frequency_hz >= spec.passband_hz[0]]
         stop_points = [p for p in response if p.frequency_hz <= spec.stopband_hz[0]]
     elif spec.response == ResponseType.BANDPASS:
-        p1, p2 = spec.passband_hz; s1, s2 = spec.stopband_hz
+        p1, p2 = spec.passband_hz
+        s1, s2 = spec.stopband_hz
         pass_points = [p for p in response if p1 <= p.frequency_hz <= p2]
         stop_points = [p for p in response if p.frequency_hz <= s1 or p.frequency_hz >= s2]
     else:
-        p1, p2 = spec.passband_hz; s1, s2 = spec.stopband_hz
+        p1, p2 = spec.passband_hz
+        s1, s2 = spec.stopband_hz
         pass_points = [p for p in response if p.frequency_hz <= p1 or p.frequency_hz >= p2]
         stop_points = [p for p in response if s1 <= p.frequency_hz <= s2]
     if not pass_points or not stop_points:

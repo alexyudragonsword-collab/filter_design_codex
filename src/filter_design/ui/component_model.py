@@ -8,7 +8,7 @@ from filter_design.formatting import engineering
 
 
 class ComponentTableModel(QAbstractTableModel):
-    HEADERS = ("编号", "元件", "位置", "谐振连接", "数值")
+    HEADERS = ("Reference", "Component", "Position", "Connection", "Value")
 
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
@@ -45,9 +45,9 @@ class ComponentTableModel(QAbstractTableModel):
         branch, component = self._rows[index.row()]
         values = (
             component.reference,
-            "电感" if component.kind.value == "L" else "电容",
-            "串联支路" if branch.position.value == "series" else "并联支路",
-            "串联" if branch.connection.value == "series" else "并联",
+            "Inductor" if component.kind.value == "L" else "Capacitor",
+            "Series branch" if branch.position.value == "series" else "Shunt branch",
+            "Series" if branch.connection.value == "series" else "Parallel",
             engineering(component.value, component.unit),
         )
         return values[index.column()]

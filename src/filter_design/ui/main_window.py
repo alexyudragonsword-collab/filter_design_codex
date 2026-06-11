@@ -59,23 +59,23 @@ class MainWindow(QMainWindow):
         self._restore_window_state()
 
     def _build_actions(self) -> None:
-        self.open_action = QAction("打开工程…", self)
+        self.open_action = QAction("Open Project…", self)
         self.open_action.setShortcut(QKeySequence.StandardKey.Open)
         self.open_action.triggered.connect(self.open_project)
-        self.save_action = QAction("保存工程…", self)
+        self.save_action = QAction("Save Project…", self)
         self.save_action.setShortcut(QKeySequence.StandardKey.Save)
         self.save_action.triggered.connect(self.save_project)
-        self.quit_action = QAction("退出", self)
+        self.quit_action = QAction("Exit", self)
         self.quit_action.setShortcut(QKeySequence.StandardKey.Quit)
         self.quit_action.triggered.connect(self.close)
 
-        self.export_csv_action = QAction("导出响应 CSV…", self)
+        self.export_csv_action = QAction("Export Response CSV…", self)
         self.export_csv_action.triggered.connect(lambda: self.export_design("csv"))
-        self.export_touchstone_action = QAction("导出 Touchstone…", self)
+        self.export_touchstone_action = QAction("Export Touchstone…", self)
         self.export_touchstone_action.triggered.connect(lambda: self.export_design("s2p"))
-        self.export_spice_action = QAction("导出 SPICE 网表…", self)
+        self.export_spice_action = QAction("Export SPICE Netlist…", self)
         self.export_spice_action.triggered.connect(lambda: self.export_design("cir"))
-        self.export_report_action = QAction("导出 HTML 报告…", self)
+        self.export_report_action = QAction("Export HTML Report…", self)
         self.export_report_action.triggered.connect(lambda: self.export_design("html"))
         self.export_actions = (
             self.export_csv_action,
@@ -86,18 +86,18 @@ class MainWindow(QMainWindow):
         for action in self.export_actions:
             action.setEnabled(False)
 
-        self.about_action = QAction("关于", self)
+        self.about_action = QAction("About", self)
         self.about_action.triggered.connect(self.show_about)
 
     def _build_menu(self) -> None:
-        file_menu = self.menuBar().addMenu("文件")
+        file_menu = self.menuBar().addMenu("File")
         file_menu.addAction(self.open_action)
         file_menu.addAction(self.save_action)
         file_menu.addSeparator()
         file_menu.addActions(self.export_actions)
         file_menu.addSeparator()
         file_menu.addAction(self.quit_action)
-        help_menu = self.menuBar().addMenu("帮助")
+        help_menu = self.menuBar().addMenu("Help")
         help_menu.addAction(self.about_action)
 
     def _build_content(self) -> None:
@@ -111,7 +111,7 @@ class MainWindow(QMainWindow):
         header_layout = QVBoxLayout(header)
         title = QLabel("Open Filter Designer")
         title.setStyleSheet("font-size: 22px; font-weight: 700;")
-        subtitle = QLabel("指标定义  →  自动综合  →  LC 电路  →  S 参数验证")
+        subtitle = QLabel("Specification  →  Synthesis  →  LC Network  →  S-Parameter Verification")
         subtitle.setStyleSheet("color: #c7d8e8; font-size: 13px;")
         header_layout.addWidget(title)
         header_layout.addWidget(subtitle)
@@ -140,9 +140,9 @@ class MainWindow(QMainWindow):
         self.component_table.setEditTriggers(QTableView.EditTrigger.NoEditTriggers)
         self.component_table.horizontalHeader().setStretchLastSection(True)
         self.component_table.verticalHeader().setVisible(False)
-        tabs.addTab(self.response_plot, "频率响应")
-        tabs.addTab(self.schematic_view, "电路拓扑")
-        tabs.addTab(self.component_table, "元件列表")
+        tabs.addTab(self.response_plot, "Frequency Response")
+        tabs.addTab(self.schematic_view, "Circuit Topology")
+        tabs.addTab(self.component_table, "Components")
         result_layout.addWidget(tabs, 1)
         splitter.addWidget(result)
         splitter.setStretchFactor(0, 0)
@@ -155,9 +155,9 @@ class MainWindow(QMainWindow):
         container = QWidget()
         layout = QHBoxLayout(container)
         layout.setContentsMargins(0, 0, 0, 0)
-        self.order_metric = self._metric_card("滤波器阶数", "—")
-        self.pass_metric = self._metric_card("最差通带损耗", "—")
-        self.stop_metric = self._metric_card("最小阻带衰减", "—")
+        self.order_metric = self._metric_card("Filter Order", "—")
+        self.pass_metric = self._metric_card("Worst Passband Loss", "—")
+        self.stop_metric = self._metric_card("Minimum Stopband Attenuation", "—")
         layout.addWidget(self.order_metric[0])
         layout.addWidget(self.pass_metric[0])
         layout.addWidget(self.stop_metric[0])
@@ -181,7 +181,7 @@ class MainWindow(QMainWindow):
 
     def _build_status_bar(self) -> None:
         status = QStatusBar()
-        self.status_text = QLabel("就绪")
+        self.status_text = QLabel("Ready")
         self.progress = QProgressBar()
         self.progress.setRange(0, 0)
         self.progress.setFixedWidth(150)
@@ -198,7 +198,7 @@ class MainWindow(QMainWindow):
         try:
             specification = self.specification_panel.specification()
         except ValueError as error:
-            self._show_error("设计指标无效", str(error))
+            self._show_error("Invalid Specification", str(error))
             return
 
         self._set_busy(True)
@@ -207,7 +207,7 @@ class MainWindow(QMainWindow):
         worker.moveToThread(thread)
         thread.started.connect(worker.run)
         worker.succeeded.connect(self._apply_design)
-        worker.failed.connect(lambda message: self._show_error("综合失败", message))
+        worker.failed.connect(lambda message: self._show_error("Synthesis Failed", message))
         worker.finished.connect(thread.quit)
         worker.finished.connect(worker.deleteLater)
         thread.finished.connect(thread.deleteLater)
@@ -231,7 +231,7 @@ class MainWindow(QMainWindow):
         for action in self.export_actions:
             action.setEnabled(True)
         warnings = "  ".join(design.synthesis.warnings)
-        self.status_text.setText(warnings or "综合与网络验证完成")
+        self.status_text.setText(warnings or "Synthesis and network verification completed")
         self.design_completed.emit(design)
 
     @staticmethod
@@ -253,12 +253,12 @@ class MainWindow(QMainWindow):
         self.save_action.setDisabled(busy)
         self.progress.setVisible(busy)
         if busy:
-            self.status_text.setText("正在综合并计算频率响应…")
+            self.status_text.setText("Synthesizing and calculating the frequency response…")
 
     @Slot()
     def open_project(self) -> None:
         path, _ = QFileDialog.getOpenFileName(
-            self, "打开滤波器工程", self._dialog_directory(),
+            self, "Open Filter Project", self._dialog_directory(),
             "Open Filter Designer (*.ofd.json);;JSON (*.json)",
         )
         if not path:
@@ -266,7 +266,7 @@ class MainWindow(QMainWindow):
         try:
             project = FilterProject.load(path)
         except (OSError, ValueError) as error:
-            self._show_error("无法打开工程", str(error))
+            self._show_error("Unable to Open Project", str(error))
             return
         self.project_path = Path(path)
         self.specification_panel.set_specification(project.specification)
@@ -279,10 +279,10 @@ class MainWindow(QMainWindow):
         try:
             specification = self.specification_panel.specification()
         except ValueError as error:
-            self._show_error("设计指标无效", str(error))
+            self._show_error("Invalid Specification", str(error))
             return
         path, _ = QFileDialog.getSaveFileName(
-            self, "保存滤波器工程", str(self.project_path or Path(self._dialog_directory()) / "filter.ofd.json"),
+            self, "Save Filter Project", str(self.project_path or Path(self._dialog_directory()) / "filter.ofd.json"),
             "Open Filter Designer (*.ofd.json);;JSON (*.json)",
         )
         if not path:
@@ -293,21 +293,21 @@ class MainWindow(QMainWindow):
         try:
             FilterProject(specification, project_path.name.removesuffix(".ofd.json")).save(project_path)
         except OSError as error:
-            self._show_error("无法保存工程", str(error))
+            self._show_error("Unable to Save Project", str(error))
             return
         self.project_path = project_path
         self.setWindowTitle(f"{project_path.stem} — Open Filter Designer")
         self._remember_directory(str(project_path))
-        self.status_text.setText(f"工程已保存：{project_path}")
+        self.status_text.setText(f"Project saved: {project_path}")
 
     def export_design(self, kind: str) -> None:
         if self.design is None:
             return
         names = {
-            "csv": ("导出响应 CSV", "CSV (*.csv)", ".csv"),
-            "s2p": ("导出 Touchstone", "Touchstone (*.s2p)", ".s2p"),
-            "cir": ("导出 SPICE 网表", "SPICE (*.cir)", ".cir"),
-            "html": ("导出 HTML 报告", "HTML (*.html)", ".html"),
+            "csv": ("Export Response CSV", "CSV (*.csv)", ".csv"),
+            "s2p": ("Export Touchstone", "Touchstone (*.s2p)", ".s2p"),
+            "cir": ("Export SPICE Netlist", "SPICE (*.cir)", ".cir"),
+            "html": ("Export HTML Report", "HTML (*.html)", ".html"),
         }
         title, file_filter, extension = names[kind]
         path, _ = QFileDialog.getSaveFileName(
@@ -321,10 +321,10 @@ class MainWindow(QMainWindow):
         try:
             self._write_export(kind, output)
         except OSError as error:
-            self._show_error("导出失败", str(error))
+            self._show_error("Export Failed", str(error))
             return
         self._remember_directory(str(output))
-        self.status_text.setText(f"已导出：{output}")
+        self.status_text.setText(f"Exported: {output}")
 
     def _write_export(self, kind: str, output: Path) -> None:
         assert self.design is not None
@@ -345,10 +345,10 @@ class MainWindow(QMainWindow):
     def show_about(self) -> None:
         QMessageBox.about(
             self,
-            "关于 Open Filter Designer",
+            "About Open Filter Designer",
             "<b>Open Filter Designer 0.2</b><br><br>"
-            "独立实现的无源集总 LC 滤波器综合与分析工具。<br>"
-            "界面使用 Qt for Python（PySide6），不包含任何商业软件源代码或资源。",
+            "An independently implemented passive lumped-LC filter synthesis and analysis tool.<br>"
+            "The interface uses Qt for Python (PySide6) and contains no commercial software source code or assets.",
         )
 
     def _show_error(self, title: str, message: str) -> None:
@@ -368,7 +368,7 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event: QCloseEvent) -> None:  # noqa: N802 - Qt API
         if self._thread is not None and self._thread.isRunning():
-            QMessageBox.information(self, "计算进行中", "请等待当前滤波器分析完成后再退出。")
+            QMessageBox.information(self, "Calculation in Progress", "Wait for the current filter analysis to finish before exiting.")
             event.ignore()
             return
         self._settings.setValue("windowGeometry", self.saveGeometry())

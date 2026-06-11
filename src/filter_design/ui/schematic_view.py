@@ -27,7 +27,7 @@ class SchematicView(QWidget):
         painter.fillRect(self.rect(), QColor("#ffffff"))
         if not self._network:
             painter.setPen(QColor("#778899"))
-            painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, "综合后显示 LC 梯形网络")
+            painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, "The synthesized LC ladder will appear here")
             return
 
         branches = self._network.branches
@@ -40,7 +40,7 @@ class SchematicView(QWidget):
         x = 50.0
         painter.setPen(QPen(QColor("#27384a"), 2))
         painter.drawLine(QPointF(18, center_y), QPointF(x, center_y))
-        painter.drawText(QPointF(18, center_y - 14), "输入")
+        painter.drawText(QPointF(18, center_y - 14), "IN")
 
         for branch in branches:
             label = " / ".join(component.reference for component in branch.components)
@@ -53,7 +53,7 @@ class SchematicView(QWidget):
 
         painter.setPen(QPen(QColor("#27384a"), 2))
         painter.drawLine(QPointF(x, center_y), QPointF(x + 35, center_y))
-        painter.drawText(QPointF(x + 3, center_y - 14), "输出")
+        painter.drawText(QPointF(x + 3, center_y - 14), "OUT")
 
     @staticmethod
     def _draw_series(painter: QPainter, x: float, y: float,

@@ -1,6 +1,5 @@
 import csv
 
-from filter_design.domain.project import FilterProject
 from filter_design.domain.specifications import Approximation, FilterSpecification, ResponseType
 from filter_design.exporters.csv_export import export_csv
 from filter_design.exporters.report import export_html

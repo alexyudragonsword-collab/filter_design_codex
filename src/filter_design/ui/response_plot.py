@@ -18,7 +18,7 @@ class ResponsePlot(QWidget):
         super().__init__(parent)
         self._response: tuple[ResponsePoint, ...] = ()
         self.setMinimumSize(560, 340)
-        self.setToolTip("蓝色：S21 插入损耗；橙色：S11 回波损耗")
+        self.setToolTip("Blue: S21 insertion loss; orange: S11 return loss")
 
     def set_response(self, response: tuple[ResponsePoint, ...]) -> None:
         self._response = response
@@ -33,7 +33,7 @@ class ResponsePlot(QWidget):
         self._draw_grid(painter, chart)
         if len(self._response) < 2:
             painter.setPen(QColor("#778899"))
-            painter.drawText(chart, Qt.AlignmentFlag.AlignCenter, "综合后显示频率响应")
+            painter.drawText(chart, Qt.AlignmentFlag.AlignCenter, "The frequency response will appear after synthesis")
             return
 
         minimum = math.log10(self._response[0].frequency_hz)
@@ -100,9 +100,9 @@ class ResponsePlot(QWidget):
         painter.drawLine(QPointF(chart.left() + 10, chart.top() + 14),
                          QPointF(chart.left() + 36, chart.top() + 14))
         painter.setPen(QColor("#1677b8"))
-        painter.drawText(QPointF(chart.left() + 43, chart.top() + 18), "S21 插入损耗")
+        painter.drawText(QPointF(chart.left() + 43, chart.top() + 18), "S21 insertion loss")
         painter.setPen(QPen(QColor("#e07a1f"), 2))
         painter.drawLine(QPointF(chart.left() + 155, chart.top() + 14),
                          QPointF(chart.left() + 181, chart.top() + 14))
         painter.setPen(QColor("#e07a1f"))
-        painter.drawText(QPointF(chart.left() + 188, chart.top() + 18), "S11 回波损耗")
+        painter.drawText(QPointF(chart.left() + 188, chart.top() + 18), "S11 return loss")

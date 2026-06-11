@@ -1,4 +1,3 @@
-import math
 import pytest
 
 from filter_design.analysis.response import logarithmic_sweep, s_parameters

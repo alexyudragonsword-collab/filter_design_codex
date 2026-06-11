@@ -33,6 +33,8 @@ def test_specification_panel_roundtrip():
     assert panel.specification() == specification
     assert panel.pass2.isEnabled()
     assert panel.stop2.isEnabled()
+    assert panel.design_button.text() == "Synthesize and Analyze"
+    assert panel.response.currentText() == "Band-pass"
 
 
 def test_main_window_completes_design_in_qthread():
@@ -68,5 +70,9 @@ def test_main_window_completes_design_in_qthread():
     assert window.design is completed[0]
     assert window.component_model.rowCount() == window.design.synthesis.order
     assert window.export_csv_action.isEnabled()
+    assert window.export_csv_action.text() == "Export Response CSV…"
+    assert window.component_model.HEADERS == (
+        "Reference", "Component", "Position", "Connection", "Value"
+    )
     assert "dB" in window.pass_metric[1].text()
     window.close()

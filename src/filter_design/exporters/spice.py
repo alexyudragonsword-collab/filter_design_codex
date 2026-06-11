@@ -18,15 +18,18 @@ def export_spice(path: str | Path, network: LadderNetwork,
     next_node = 2
     for branch in network.branches:
         if branch.position == BranchPosition.SERIES:
-            destination = f"n{next_node}"; next_node += 1
+            destination = f"n{next_node}"
+            next_node += 1
             if branch.connection == Connection.PARALLEL:
                 lines.extend(_line(c, current, destination) for c in branch.components)
             else:
                 node = current
                 for index, component in enumerate(branch.components):
                     target = destination if index == len(branch.components) - 1 else f"n{next_node}"
-                    if target != destination: next_node += 1
-                    lines.append(_line(component, node, target)); node = target
+                    if target != destination:
+                        next_node += 1
+                    lines.append(_line(component, node, target))
+                    node = target
             current = destination
         elif branch.connection == Connection.PARALLEL:
             lines.extend(_line(c, current, "0") for c in branch.components)
@@ -34,8 +37,10 @@ def export_spice(path: str | Path, network: LadderNetwork,
             node = current
             for index, component in enumerate(branch.components):
                 target = "0" if index == len(branch.components) - 1 else f"n{next_node}"
-                if target != "0": next_node += 1
-                lines.append(_line(component, node, target)); node = target
+                if target != "0":
+                    next_node += 1
+                lines.append(_line(component, node, target))
+                node = target
     lines.extend([f"RL {current} 0 {network.load_impedance_ohm:.12g}",
                   f".ac dec 100 {sweep_start_hz:.12g} {sweep_stop_hz:.12g}",
                   f".print ac vdb({current})", ".end"])
