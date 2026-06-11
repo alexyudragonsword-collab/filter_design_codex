@@ -39,7 +39,8 @@ No NumPy dependency is required. This favors deployment simplicity for the curre
 - Ideal inductors and capacitors only; no finite Q, ESR, self-resonance, or coupling.
 - Ladder prototypes begin with a series element.
 - Automatic synthesis targets equal real source/load impedances. Unequal values can be analyzed but generate a warning.
-- No transmission-line, microstrip, active, digital, or electromagnetic geometry synthesis.
+- No transmission-line, microstrip, digital, or electromagnetic geometry synthesis.
+- The exact leapfrog realization currently supports low-pass alternating series-L/shunt-C ladders only.
 - The custom-painted Qt response widget is intentionally lightweight and currently displays insertion loss and return loss; CSV/S2P contain the numerical data for external plotting.
 
 
@@ -61,3 +62,10 @@ Only the main GUI thread mutates widgets. The worker receives a complete immutab
 The active-RC layer converts the synthesized differential impedance rather than re-synthesizing the transfer function. Each original impedance is represented by two mirrored leg impedances of half the original value around a virtual common-mode node (`VCM`). Consequently, a physical capacitor uses `2C` in each leg. An inductor uses one Antoniou generalized-impedance-converter cell per leg, each targeting `L/2`. With equal GIC resistors, the ideal relation is `L = C R²`.
 
 The realization output is a domain object containing stages, op-amp count, and a complete resistor/capacitor bill of materials. The Qt tab only renders this result; it does not perform circuit calculations. Values assume ideal amplifiers and must be checked against gain-bandwidth, slew rate, noise, output current, stability, and common-mode constraints before hardware use.
+
+
+## Fully differential leapfrog realization
+
+The leapfrog layer writes the low-pass ladder differential equations directly. A series-inductor state is represented as `x = Z0 iL`, while a shunt-capacitor state is represented as `x = vC`; therefore every state is a voltage. Source resistance, load resistance, and adjacent energy-storage elements produce the sparse state coefficients in the same sequence as the passive ladder.
+
+Each state is implemented by two ideal inverting op-amp integrators around `VCM`. For a selected integrating capacitor `Cint`, every coefficient `a` becomes a resistor pair `R = 1/(|a| Cint)`. A positive coefficient uses cross-coupled differential routing, and a negative coefficient uses same-side routing. The implementation exposes both the state equations and the complete resistor/capacitor bill of materials. Automated tests solve the generated complex state equations and compare the resulting voltage transfer against the original LC network S21.

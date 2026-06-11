@@ -69,11 +69,18 @@ def test_main_window_completes_design_in_qthread():
 
     assert window.design is completed[0]
     assert window.component_model.rowCount() == window.design.synthesis.order
-    assert window.result_tabs.count() == 4
+    assert window.result_tabs.count() == 5
     assert window.result_tabs.tabText(3) == "Fully Differential Active-RC"
     assert window.active_rc_tab.model.rowCount() == len(
         window.design.fully_differential.components
     )
+    assert window.result_tabs.tabText(4) == "Fully Differential Leapfrog"
+    assert window.leapfrog_tab.state_model.rowCount() == len(window.design.leapfrog.states)
+    assert window.leapfrog_tab.component_model.rowCount() == len(
+        window.design.leapfrog.components
+    )
+    assert "integrator states" in window.leapfrog_tab.summary.text()
+    assert window.leapfrog_tab.details_tabs.tabText(1) == "Resistor and Capacitor Values"
     assert "op-amps" in window.active_rc_tab.summary.text()
     assert window.export_csv_action.isEnabled()
     assert window.export_csv_action.text() == "Export Response CSV…"

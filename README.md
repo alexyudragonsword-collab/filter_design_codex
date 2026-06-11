@@ -27,6 +27,10 @@ The current release implements a complete and verifiable passive lumped-filter w
 
 ![Fully Differential Active-RC tab](docs/images/fully-differential-active-rc.png)
 
+### Fully Differential Leapfrog
+
+![Fully Differential Leapfrog tab](docs/images/fully-differential-leapfrog.png)
+
 ## Features
 
 - **Responses:** low-pass, high-pass, band-pass, and band-stop.
@@ -36,6 +40,7 @@ The current release implements a complete and verifiable passive lumped-filter w
 - **Independent verification:** cascades the generated component network as ABCD matrices and calculates S11, S21, S12, S22, insertion loss, return loss, phase, and group delay.
 - **Qt desktop application:** a native PySide6 interface with a specification panel, metric cards, response plot, circuit view, and component table.
 - **Fully differential active-RC realization:** replaces every inductor with mirrored Antoniou GIC cells and reports the required op-amp, resistor, and capacitor values.
+- **Fully differential leapfrog realization:** exactly simulates a low-pass LC ladder with interleaved ideal-op-amp integrators and lists every coupling resistor and integrating capacitor.
 - **Responsive analysis:** synthesis and frequency sweeps run in a background `QThread` without blocking the UI.
 - **Command-line interface:** suitable for scripts, batch processing, and CI.
 - **Project files:** versioned JSON save/load support.
@@ -101,7 +106,7 @@ Use `--json` for a machine-readable design summary and `--help` for all options.
 2. Enter passband and stopband edges in MHz, then set ripple, attenuation, impedance, and automatic or fixed order.
 3. Select **Synthesize and Analyze**. The calculation runs in a Qt worker thread while the UI shows progress.
 4. Review filter order, worst passband loss, and minimum stopband attenuation in the metric cards.
-5. Inspect the **Frequency Response**, **Circuit Topology**, **Components**, and **Fully Differential Active-RC** tabs.
+5. Inspect the **Frequency Response**, **Circuit Topology**, **Components**, and **Fully Differential Active-RC**, and **Fully Differential Leapfrog** tabs.
 6. Use the **File** menu to save the project or export CSV, Touchstone, SPICE, and HTML files.
 7. Window geometry and the most recently used directory are persisted with `QSettings`.
 
@@ -113,6 +118,7 @@ Use `--json` for a machine-readable design summary and `--help` for all options.
 - Both resonator components remain explicit in band-pass and band-stop network models.
 - Components are ideal and lossless. Output does not replace pre-manufacturing verification of Q, parasitics, tolerances, power handling, and physical layout.
 - The fully differential active-RC view splits every impedance equally between the positive and negative legs. A capacitor becomes two `2C` capacitors, while each inductor becomes two `L/2` Antoniou GIC cells using `L = C × R²`. The listed values assume ideal op-amps and a stiff common-mode reference.
+- The fully differential leapfrog view currently supports low-pass alternating series-L/shunt-C ladders. It scales inductor currents by the port impedance so all states have voltage units, then implements each state coefficient with `R = 1/(|a|Cint)`. Positive terms are cross-coupled and negative terms are routed same-side into ideal differential inverting integrators.
 
 ## Project Layout
 

@@ -30,6 +30,7 @@ from filter_design.workflow import Design, suggested_sweep
 
 from .active_rc_tab import ActiveRCTab
 from .component_model import ComponentTableModel
+from .leapfrog_tab import LeapfrogTab
 from .response_plot import ResponsePlot
 from .schematic_view import SchematicView
 from .specification_panel import SpecificationPanel
@@ -136,6 +137,7 @@ class MainWindow(QMainWindow):
         self.schematic_view = SchematicView()
         self.component_model = ComponentTableModel(self)
         self.active_rc_tab = ActiveRCTab()
+        self.leapfrog_tab = LeapfrogTab()
         self.component_table = QTableView()
         self.component_table.setModel(self.component_model)
         self.component_table.setAlternatingRowColors(True)
@@ -147,6 +149,7 @@ class MainWindow(QMainWindow):
         tabs.addTab(self.schematic_view, "Circuit Topology")
         tabs.addTab(self.component_table, "Components")
         tabs.addTab(self.active_rc_tab, "Fully Differential Active-RC")
+        tabs.addTab(self.leapfrog_tab, "Fully Differential Leapfrog")
         result_layout.addWidget(tabs, 1)
         splitter.addWidget(result)
         splitter.setStretchFactor(0, 0)
@@ -227,6 +230,7 @@ class MainWindow(QMainWindow):
         self.schematic_view.set_network(design.synthesis.network)
         self.component_model.set_network(design.synthesis.network)
         self.active_rc_tab.set_realization(design.fully_differential)
+        self.leapfrog_tab.set_realization(design.leapfrog)
         self.component_table.resizeColumnsToContents()
         self.order_metric[1].setText(str(design.synthesis.order))
         self._set_metric(self.pass_metric[1], design.metrics.worst_passband_loss_db,
