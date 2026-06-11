@@ -11,7 +11,17 @@ The current release implements a complete and verifiable passive lumped-filter w
 
 ## Interface Preview
 
-![Open Filter Designer Qt main window](docs/images/open-filter-designer-main-window.png)
+### Frequency Response
+
+![Frequency Response tab](docs/images/frequency-response.png)
+
+### Circuit Topology
+
+![Circuit Topology tab](docs/images/circuit-topology.png)
+
+### Components
+
+![Components tab](docs/images/components.png)
 
 ## Features
 
