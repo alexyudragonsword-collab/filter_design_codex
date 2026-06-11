@@ -106,7 +106,7 @@ Use `--json` for a machine-readable design summary and `--help` for all options.
 2. Enter passband and stopband edges in MHz, then set ripple, attenuation, impedance, and automatic or fixed order.
 3. Select **Synthesize and Analyze**. The calculation runs in a Qt worker thread while the UI shows progress.
 4. Review filter order, worst passband loss, and minimum stopband attenuation in the metric cards.
-5. Inspect the **Frequency Response**, **Circuit Topology**, **Components**, and **Fully Differential Active-RC**, and **Fully Differential Leapfrog** tabs.
+5. Inspect the **Frequency Response**, **Circuit Topology**, **Components**, **Fully Differential Active-RC**, and **Fully Differential Leapfrog** tabs.
 6. Use the **File** menu to save the project or export CSV, Touchstone, SPICE, and HTML files.
 7. Window geometry and the most recently used directory are persisted with `QSettings`.
 
