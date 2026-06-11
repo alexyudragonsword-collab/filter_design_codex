@@ -69,6 +69,12 @@ def test_main_window_completes_design_in_qthread():
 
     assert window.design is completed[0]
     assert window.component_model.rowCount() == window.design.synthesis.order
+    assert window.result_tabs.count() == 4
+    assert window.result_tabs.tabText(3) == "Fully Differential Active-RC"
+    assert window.active_rc_tab.model.rowCount() == len(
+        window.design.fully_differential.components
+    )
+    assert "op-amps" in window.active_rc_tab.summary.text()
     assert window.export_csv_action.isEnabled()
     assert window.export_csv_action.text() == "Export Response CSV…"
     assert window.component_model.HEADERS == (

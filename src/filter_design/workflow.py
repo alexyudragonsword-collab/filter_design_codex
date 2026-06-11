@@ -5,8 +5,10 @@ from dataclasses import dataclass
 
 from filter_design.analysis.metrics import ResponseMetrics, measure
 from filter_design.analysis.response import ResponsePoint, analyze, logarithmic_sweep
+from filter_design.domain.active_rc import FullyDifferentialRealization
 from filter_design.domain.network import SynthesisResult
 from filter_design.domain.specifications import FilterSpecification
+from filter_design.realization.fully_differential import realize_fully_differential
 from filter_design.synthesis.service import synthesize_filter
 
 
@@ -16,6 +18,7 @@ class Design:
     synthesis: SynthesisResult
     response: tuple[ResponsePoint, ...]
     metrics: ResponseMetrics
+    fully_differential: FullyDifferentialRealization
 
 
 def suggested_sweep(spec: FilterSpecification, points: int = 701) -> list[float]:
@@ -27,4 +30,5 @@ def design_filter(specification: FilterSpecification, points: int = 701) -> Desi
     synthesis = synthesize_filter(specification)
     response = analyze(synthesis.network, suggested_sweep(specification, points))
     metrics = measure(specification, response)
-    return Design(specification, synthesis, tuple(response), metrics)
+    fully_differential = realize_fully_differential(synthesis.network)
+    return Design(specification, synthesis, tuple(response), metrics, fully_differential)

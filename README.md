@@ -23,6 +23,10 @@ The current release implements a complete and verifiable passive lumped-filter w
 
 ![Components tab](docs/images/components.png)
 
+### Fully Differential Active-RC
+
+![Fully Differential Active-RC tab](docs/images/fully-differential-active-rc.png)
+
 ## Features
 
 - **Responses:** low-pass, high-pass, band-pass, and band-stop.
@@ -31,6 +35,7 @@ The current release implements a complete and verifiable passive lumped-filter w
 - **Circuit synthesis:** generates ideal LC ladders and expands band-pass/band-stop elements into series or parallel resonators.
 - **Independent verification:** cascades the generated component network as ABCD matrices and calculates S11, S21, S12, S22, insertion loss, return loss, phase, and group delay.
 - **Qt desktop application:** a native PySide6 interface with a specification panel, metric cards, response plot, circuit view, and component table.
+- **Fully differential active-RC realization:** replaces every inductor with mirrored Antoniou GIC cells and reports the required op-amp, resistor, and capacitor values.
 - **Responsive analysis:** synthesis and frequency sweeps run in a background `QThread` without blocking the UI.
 - **Command-line interface:** suitable for scripts, batch processing, and CI.
 - **Project files:** versioned JSON save/load support.
@@ -96,7 +101,7 @@ Use `--json` for a machine-readable design summary and `--help` for all options.
 2. Enter passband and stopband edges in MHz, then set ripple, attenuation, impedance, and automatic or fixed order.
 3. Select **Synthesize and Analyze**. The calculation runs in a Qt worker thread while the UI shows progress.
 4. Review filter order, worst passband loss, and minimum stopband attenuation in the metric cards.
-5. Inspect the **Frequency Response**, **Circuit Topology**, and **Components** tabs.
+5. Inspect the **Frequency Response**, **Circuit Topology**, **Components**, and **Fully Differential Active-RC** tabs.
 6. Use the **File** menu to save the project or export CSV, Touchstone, SPICE, and HTML files.
 7. Window geometry and the most recently used directory are persisted with `QSettings`.
 
@@ -107,6 +112,7 @@ Use `--json` for a machine-readable design summary and `--help` for all options.
 - A classic even-order Chebyshev-I ladder has unequal terminations. Automatic equal-termination synthesis promotes an even minimum order to the next odd order and reports a diagnostic. A fixed even order remains available for investigation, while verification reports the actual mismatch.
 - Both resonator components remain explicit in band-pass and band-stop network models.
 - Components are ideal and lossless. Output does not replace pre-manufacturing verification of Q, parasitics, tolerances, power handling, and physical layout.
+- The fully differential active-RC view splits every impedance equally between the positive and negative legs. A capacitor becomes two `2C` capacitors, while each inductor becomes two `L/2` Antoniou GIC cells using `L = C × R²`. The listed values assume ideal op-amps and a stiff common-mode reference.
 
 ## Project Layout
 
@@ -114,6 +120,7 @@ Use `--json` for a machine-readable design summary and `--help` for all options.
 src/filter_design/
 ├── domain/          # Specifications, projects, circuits, and result objects
 ├── synthesis/       # Order, prototype coefficients, and frequency/impedance transforms
+├── realization/     # Fully differential op-amp-RC and future physical realizations
 ├── analysis/        # ABCD, S-parameters, sweeps, and verification metrics
 ├── exporters/       # CSV, Touchstone, SPICE, and HTML
 ├── ui/              # PySide6/Qt application, plots, models, and worker

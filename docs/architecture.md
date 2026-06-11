@@ -54,3 +54,10 @@ The desktop layer uses Qt for Python (PySide6) and is split by responsibility:
 - `MainWindow` owns project actions, export actions, status reporting, and persisted `QSettings`.
 
 Only the main GUI thread mutates widgets. The worker receives a complete immutable specification and never reads widget state.
+
+
+## Fully differential active-RC realization
+
+The active-RC layer converts the synthesized differential impedance rather than re-synthesizing the transfer function. Each original impedance is represented by two mirrored leg impedances of half the original value around a virtual common-mode node (`VCM`). Consequently, a physical capacitor uses `2C` in each leg. An inductor uses one Antoniou generalized-impedance-converter cell per leg, each targeting `L/2`. With equal GIC resistors, the ideal relation is `L = C R²`.
+
+The realization output is a domain object containing stages, op-amp count, and a complete resistor/capacitor bill of materials. The Qt tab only renders this result; it does not perform circuit calculations. Values assume ideal amplifiers and must be checked against gain-bandwidth, slew rate, noise, output current, stability, and common-mode constraints before hardware use.
